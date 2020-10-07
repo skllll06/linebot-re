@@ -41,7 +41,7 @@ function lineBot(req, res) {
       case 'follow':
         promises.push(greeting_follow(ev));
         break;
-      case 'text':
+      case 'message':
         promises.push(handleMessageEvent(ev));
         break;
     }
