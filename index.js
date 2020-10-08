@@ -100,9 +100,11 @@ function lineBot(req, res) {
       }
     ]
   }
+  console.log(richmenu[0])
   client.createRichMenu(richmenu)
     .then((richMenuId) => {
       console.log(richMenuId)
+      console.log("0")
       RichMenushow(richMenuId);
     })
 
