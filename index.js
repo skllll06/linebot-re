@@ -24,6 +24,7 @@ const config = {
 const client = new line.Client(config);
 
 //リッチメニュー
+client.deleteDefaultRichMenu()
 const richmenu = {
   "size": {
     "width": 2500,
@@ -31,7 +32,7 @@ const richmenu = {
   },
   "selected": true,
   "name": "リッチメニュー 1",
-  "chatBarText": "お知らせ",
+  "chatBarText": "メニュー",
   "areas": [
     {
       "bounds": {
