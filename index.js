@@ -100,7 +100,7 @@ function lineBot(req, res) {
   res.status(200).end();
   // ボディからイベントを取得
   console.log(richmenu)
-  console.log("きた？")
+  console.log("きた???")
   client.createRichMenu(richmenu)
     .then((richMenuId) => {
       console.log(richMenuId)
