@@ -98,7 +98,7 @@ function lineBot(req, res) {
   client.createRichMenu(richmenu)
     .then((richMenuId) => {
       console.log(richMenuId)
-      RichMenushow();
+      RichMenushow(richMenuId);
     })
  
   const events = req.body.events;
@@ -141,7 +141,7 @@ async function handleMessageEvent(ev) {
   }
 }
 
-const RichMenushow = function () { 
+const RichMenushow = function (richMenuId) { 
   console.log(richMenuId)
   client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
   client.getRichMenu(richMenuId)
