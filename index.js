@@ -22,6 +22,16 @@ const config = {
 };
 const client = new line.Client(config);
 
+const create_userTable = 
+{ text:'CREATE TABLE IF NOT EXISTS users (id SERIAL NOT NULL, line_uid VARCHAR(255), display_name VARCHAR(255), timestamp VARCHAR(255));'
+};
+
+connection.query(create_userTable)
+   .then(()=>{
+       console.log('table users created successfully!!');
+   })
+   .catch(e=>console.log(e));
+
 express()
   .use(express.static(path.join(__dirname, "public")))
   .set("views", path.join(__dirname, "views"))
@@ -30,6 +40,7 @@ express()
   .post("/hook/", line.middleware(config), (req, res) => lineBot(req, res))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
+  
 function lineBot(req, res) {
   //とりあえず200番を返す
   res.status(200).end();
@@ -104,12 +115,7 @@ const handlePostbackEvent = async (ev) => {
     const orderedMenu = splitData[1];
     const selectedDate = splitData[2];
     const selectedTime = splitData[3];
-    const startTimestamp = timeConversion(selectedDate,selectedTime);
-    console.log('その1');
-    const treatTime = calcTreatTime(ev.source.userId,orderedMenu);
-    const endTimestamp = startTimestamp + treatTime*60*1000;
-    console.log('その4');
-    console.log('endTime:',endTimestamp);
+    
   }else if(splitData[0] === 'no'){
     // 処理
   }
