@@ -25,7 +25,7 @@ const client = new line.Client(config);
 
 //リッチメニュー
 client.deleteDefaultRichMenu()
-client.deleteRichMenu(richmenu-f4f8674aaf942ee45d980c54e7622f87)
+client.deleteRichMenu("richmenu-f4f8674aaf942ee45d980c54e7622f87")
 
 //テーブル作成(userテーブル)
 const create_userTable =
