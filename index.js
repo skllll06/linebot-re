@@ -10,7 +10,7 @@ const connection = new Client({
   host: process.env.PG_HOST,
   database: process.env.PG_DATABASE,
   password: process.env.PG_PASSWORD,
-  port: 先ほどのページ記載のあったポート番号
+  port: 5432
 });
 connection.connect();
 
@@ -30,7 +30,7 @@ express()
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 function lineBot(req, res) {
-  //200番を返す
+  //とりあえず200番を返す
   res.status(200).end();
   // ボディからイベントを取得
   const events = req.body.events;
