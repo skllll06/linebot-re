@@ -27,22 +27,23 @@ const richmenu = {
   size: {
     width: 2500,
     height: 1686
-  },}
+  },
+}
 client.createRichMenu(richmenu)
   .then((richMenuId) =>
-  console.log(richMenuId))
-//デフォルトのリッチメニュー
-client.setDefaultRichMenu(richMenuId)
+    console.log(richMenuId))
+
 
 //テーブル作成(userテーブル)
-const create_userTable = 
-{ text:'CREATE TABLE IF NOT EXISTS users (id SERIAL NOT NULL, line_uid VARCHAR(255), display_name VARCHAR(255), timestamp VARCHAR(255));'
+const create_userTable =
+{
+  text: 'CREATE TABLE IF NOT EXISTS users (id SERIAL NOT NULL, line_uid VARCHAR(255), display_name VARCHAR(255), timestamp VARCHAR(255));'
 };
 connection.query(create_userTable)
-   .then(()=>{
-       console.log('table users created successfully!!');
-   })
-   .catch(e=>console.log(e));
+  .then(() => {
+    console.log('table users created successfully!!');
+  })
+  .catch(e => console.log(e));
 
 express()
   .use(express.static(path.join(__dirname, "public")))
@@ -52,25 +53,25 @@ express()
   .post("/hook/", line.middleware(config), (req, res) => lineBot(req, res))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-  
+
 function lineBot(req, res) {
   //とりあえず200番を返す
   res.status(200).end();
   // ボディからイベントを取得
   const events = req.body.events;
-    const promises = [];
-    for (let i = 0; i < events.length; i++) {
-      const ev = events[i];
-      switch (ev.type) {
-        case 'follow':
-          promises.push(greeting_follow(ev));
-          break;
-        case 'message':
-          promises.push(handleMessageEvent(ev));
-          break;
+  const promises = [];
+  for (let i = 0; i < events.length; i++) {
+    const ev = events[i];
+    switch (ev.type) {
+      case 'follow':
+        promises.push(greeting_follow(ev));
+        break;
+      case 'message':
+        promises.push(handleMessageEvent(ev));
+        break;
       case 'postback':
-          promises.push(handlePostbackEvent(ev));
-          break;
+        promises.push(handlePostbackEvent(ev));
+        break;
     }
   }
   Promise
@@ -87,9 +88,9 @@ async function handleMessageEvent(ev) {
   //返事を送信
   if (text === '予約する') {
     orderChoice(ev);
-  }else if (text === 'ALFAを予約' || text === 'BETAを予約') {
-    askDate(ev,text);
-  }else {
+  } else if (text === 'ALFAを予約' || text === 'BETAを予約') {
+    askDate(ev, text);
+  } else {
     return client.replyMessage(ev.replyToken, {
       type: "text",
       text: `${pro.displayName}さん、今「${ev.message.text}」って言いました？`
@@ -101,14 +102,14 @@ async function handleMessageEvent(ev) {
 const greeting_follow = async (ev) => {
   const profile = await client.getProfile(ev.source.userId);
   const table_insert = {
-    text:'INSERT INTO users (line_uid,display_name,timestamp) VALUES($1,$2,$3);',
-    values:[ev.source.userId,pro.displayName,timeStamp]
+    text: 'INSERT INTO users (line_uid,display_name,timestamp) VALUES($1,$2,$3);',
+    values: [ev.source.userId, pro.displayName, timeStamp]
   };
   connection.query(table_insert)
-    .then(()=>{
-       console.log('insert successfully!!')
-     })
-    .catch(e=>console.log(e));
+    .then(() => {
+      console.log('insert successfully!!')
+    })
+    .catch(e => console.log(e));
   return client.replyMessage(ev.replyToken, {
     "type": "text",
     "text": `${profile.displayName}さん、フォローありがとうございます!\uDBC0\uDC04`
@@ -119,25 +120,25 @@ const handlePostbackEvent = async (ev) => {
   const profile = await client.getProfile(ev.source.userId);
   const data = ev.postback.data;
   const splitData = data.split('&');
-  
-  if(splitData[0] === 'menu'){
-      const orderedMenu = splitData[1];
-      askDate(ev,orderedMenu);
-  }else if(splitData[0] === 'date'){
-      const orderedMenu = splitData[1];
-      const selectedDate = ev.postback.params.date;
-      askTime(ev,orderedMenu,selectedDate);
-  }else if(splitData[0] === 'time'){
-      const orderedMenu = splitData[1];
-      const selectedDate = splitData[2];
-      const selectedTime = splitData[3];
-      confirmation(ev,orderedMenu,selectedDate,selectedTime);
-  }else if(splitData[0] === 'yes'){
+
+  if (splitData[0] === 'menu') {
+    const orderedMenu = splitData[1];
+    askDate(ev, orderedMenu);
+  } else if (splitData[0] === 'date') {
+    const orderedMenu = splitData[1];
+    const selectedDate = ev.postback.params.date;
+    askTime(ev, orderedMenu, selectedDate);
+  } else if (splitData[0] === 'time') {
     const orderedMenu = splitData[1];
     const selectedDate = splitData[2];
     const selectedTime = splitData[3];
-    
-  }else if(splitData[0] === 'no'){
+    confirmation(ev, orderedMenu, selectedDate, selectedTime);
+  } else if (splitData[0] === 'yes') {
+    const orderedMenu = splitData[1];
+    const selectedDate = splitData[2];
+    const selectedTime = splitData[3];
+
+  } else if (splitData[0] === 'no') {
     // 処理
   }
 }
@@ -280,12 +281,12 @@ const orderChoice = (ev) => {
   });
 }
 
-const askDate = (ev,orderedMenu) => {
-return client.replyMessage(ev.replyToken,{
-  "type":"flex",
-  "altText":"予約日選択",
-  "contents":
-  {
+const askDate = (ev, orderedMenu) => {
+  return client.replyMessage(ev.replyToken, {
+    "type": "flex",
+    "altText": "予約日選択",
+    "contents":
+    {
       "type": "bubble",
       "body": {
         "type": "box",
@@ -315,93 +316,93 @@ return client.replyMessage(ev.replyToken,{
         ]
       }
     }
-});
-}
-
-const askTime = (ev,orderedMenu,selectedDate) => {
-  return client.replyMessage(ev.replyToken,{
-      "type":"flex",
-      "altText":"予約時間選択",
-      "contents":
-      {
-          "type": "bubble",
-          "header": {
-            "type": "box",
-            "layout": "vertical",
-            "contents": [
-              {
-                "type": "text",
-                "text": "ご希望の時間帯を選択してください（緑=予約可能です）",
-                "wrap": true,
-                "size": "lg"
-              },
-              {
-                "type": "separator"
-              }
-            ]
-          },
-          "body": {
-            "type": "box",
-            "layout": "vertical",
-            "contents": [
-              {
-                "type": "box",
-                "layout": "vertical",
-                "contents": [
-                  {
-                    "type": "button",
-                    "action": {
-                      "type": "postback",
-                      "label": "午前(8:00~12:00)",
-                      "data":`time&${orderedMenu}&${selectedDate}&0`
-                    },
-                    "style": "primary",
-                    "color": "#00AA00",
-                    "margin": "md"
-                  },
-                  {
-                    "type": "button",
-                    "action": {
-                      "type": "postback",
-                      "label": "午後(13:00~17:00)",
-                      "data": `time&${orderedMenu}&${selectedDate}&1`
-                    },
-                    "style": "primary",
-                    "color": "#00AA00",
-                    "margin": "md"
-                  },
-                  {
-                    "type": "button",
-                    "action": {
-                      "type": "postback",
-                      "label": "終日(8:00~17:00)",
-                      "data": `time&${orderedMenu}&${selectedDate}&2`
-                    },
-                    "style": "primary",
-                    "color": "#00AA00",
-                    "margin": "md"
-                  },
-                  {
-                    "type": "button",
-                    "action": {
-                      "type": "postback",
-                      "label": "終了",
-                      "data": "end"
-                    },
-                    "style": "primary",
-                    "color": "#0000ff",
-                    "margin": "md"
-                  }
-                ],
-                "margin": "md"
-              }
-            ]
-          }
-        }       
   });
 }
 
-const confirmation = (ev,menu,date,time) => {
+const askTime = (ev, orderedMenu, selectedDate) => {
+  return client.replyMessage(ev.replyToken, {
+    "type": "flex",
+    "altText": "予約時間選択",
+    "contents":
+    {
+      "type": "bubble",
+      "header": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "ご希望の時間帯を選択してください（緑=予約可能です）",
+            "wrap": true,
+            "size": "lg"
+          },
+          {
+            "type": "separator"
+          }
+        ]
+      },
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "button",
+                "action": {
+                  "type": "postback",
+                  "label": "午前(8:00~12:00)",
+                  "data": `time&${orderedMenu}&${selectedDate}&0`
+                },
+                "style": "primary",
+                "color": "#00AA00",
+                "margin": "md"
+              },
+              {
+                "type": "button",
+                "action": {
+                  "type": "postback",
+                  "label": "午後(13:00~17:00)",
+                  "data": `time&${orderedMenu}&${selectedDate}&1`
+                },
+                "style": "primary",
+                "color": "#00AA00",
+                "margin": "md"
+              },
+              {
+                "type": "button",
+                "action": {
+                  "type": "postback",
+                  "label": "終日(8:00~17:00)",
+                  "data": `time&${orderedMenu}&${selectedDate}&2`
+                },
+                "style": "primary",
+                "color": "#00AA00",
+                "margin": "md"
+              },
+              {
+                "type": "button",
+                "action": {
+                  "type": "postback",
+                  "label": "終了",
+                  "data": "end"
+                },
+                "style": "primary",
+                "color": "#0000ff",
+                "margin": "md"
+              }
+            ],
+            "margin": "md"
+          }
+        ]
+      }
+    }
+  });
+}
+
+const confirmation = (ev, menu, date, time) => {
   const splitDate = date.split('-');
   let selectedTime
   switch (time) {
@@ -413,11 +414,11 @@ const confirmation = (ev,menu,date,time) => {
       break;
     case '2':
       selectedTime = "8:00~17:00";
-        break;
+      break;
   }
-  return client.replyMessage(ev.replyToken,{
-    "type":"flex",
-    "altText":"menuSelect",
+  return client.replyMessage(ev.replyToken, {
+    "type": "flex",
+    "altText": "menuSelect",
     "contents":
     {
       "type": "bubble",
@@ -457,4 +458,4 @@ const confirmation = (ev,menu,date,time) => {
       }
     }
   });
- }
+}
