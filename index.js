@@ -18,11 +18,11 @@ const connection = new Client({
 connection.connect();
 
 //LINE API設定
-// const config = {
-//   channelAccessToken: process.env.ACCESS_TOKEN,
-//   channelSecret: process.env.SECRET_KEY
-// };
-// const client = new line.Client(config);
+const config = {
+  channelAccessToken: process.env.ACCESS_TOKEN,
+  channelSecret: process.env.SECRET_KEY
+};
+const client = new line.Client(config);
 
 //リッチメニュー
 const richmenu = {
@@ -82,10 +82,10 @@ client.createRichMenu(richmenu)
   RichMenushow(richMenuId);
 })
 
-client.getRichMenuList()
-	.then((richmenus) => {
-    ids.forEach((richmenu) => console.log(richmenu));
-  })
+// client.getRichMenuList()
+// 	.then((richmenus) => {
+//     ids.forEach((richmenu) => console.log(richmenu));
+//   })
   
 
 //テーブル作成(userテーブル)
