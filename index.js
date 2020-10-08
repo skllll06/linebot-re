@@ -45,6 +45,9 @@ function lineBot(req, res) {
       case 'message':
         promises.push(handleMessageEvent(ev));
         break;
+      case 'postback':
+          promises.push(handlePostbackEvent(ev));
+          break;
     }
   }
   Promise
@@ -68,7 +71,7 @@ async function handleMessageEvent(ev) {
     return client.replyMessage(ev.replyToken, {
       type: "text",
       text: `${pro.displayName}さん、今「${ev.message.text}」って言いました？`
-    })
+    });
   }
 }
 
@@ -78,6 +81,21 @@ const greeting_follow = async (ev) => {
     "type": "text",
     "text": `${profile.displayName}さん、フォローありがとうございます!\uDBC0\uDC04`
   });
+}
+
+const handlePostbackEvent = async (ev) => {
+  const profile = await client.getProfile(ev.source.userId);
+  const data = ev.postback.data;
+  const splitData = data.split('&');
+  
+  if(splitData[0] === 'menu'){
+      const orderedMenu = splitData[1];
+      askDate(ev,orderedMenu);
+  }else if(splitData[0] === 'date'){
+      const orderedMenu = splitData[1];
+      const selectedDate = ev.postback.params.date;
+      askTime(ev,orderedMenu,selectedDate);
+  }
 }
 
 
@@ -254,4 +272,87 @@ return client.replyMessage(ev.replyToken,{
       }
     }
 });
+}
+
+const askTime = (ev,orderedMenu,selectedDate) => {
+  return client.replyMessage(ev.replyToken,{
+      "type":"flex",
+      "altText":"予約時間選択",
+      "contents":
+      {
+          "type": "bubble",
+          "header": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ご希望の時間帯を選択してください（緑=予約可能です）",
+                "wrap": true,
+                "size": "lg"
+              },
+              {
+                "type": "separator"
+              }
+            ]
+          },
+          "body": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "午前(8:00~12:00)",
+                      "data":`time&${orderedMenu}&${selectedDate}&0`
+                    },
+                    "style": "primary",
+                    "color": "#00AA00",
+                    "margin": "md"
+                  },
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "午後(13:00~17:00)",
+                      "data": `time&${orderedMenu}&${selectedDate}&1`
+                    },
+                    "style": "primary",
+                    "color": "#00AA00",
+                    "margin": "md"
+                  },
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "終日(8:00~17:00)",
+                      "data": `time&${orderedMenu}&${selectedDate}&2`
+                    },
+                    "style": "primary",
+                    "color": "#00AA00",
+                    "margin": "md"
+                  },
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "終了",
+                      "data": "end"
+                    },
+                    "style": "primary",
+                    "color": "#0000ff",
+                    "margin": "md"
+                  }
+                ],
+                "margin": "md"
+              }
+            ]
+          }
+        }       
+  });
 }
