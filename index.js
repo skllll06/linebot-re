@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 5000;
 const { Client } = require('pg');
 const line = require("@line/bot-sdk");
 var fs = require('fs');
+var ids = require('ids');
 
 //postgresql設定
 const connection = new Client({
@@ -24,63 +25,62 @@ const config = {
 const client = new line.Client(config);
 
 //リッチメニュー
-const richmenu = {
-  "size": {
-    "width": 2500,
-    "height": 843
-  },
-  "selected": true,
-  "name": "リッチメニュー 1",
-  "chatBarText": "メニュー",
-  "areas": [
-    {
-      "bounds": {
-        "x": 0,
-        "y": 4,
-        "width": 825,
-        "height": 839
-      },
-      "action": {
-        "type": "message",
-        "text": "予約する"
-      }
-    },
-    {
-      "bounds": {
-        "x": 823,
-        "y": 0,
-        "width": 850,
-        "height": 839
-      },
-      "action": {
-        "type": "postback",
-        "data": "connect",
-      }
-    },
-    {
-      "bounds": {
-        "x": 1668,
-        "y": 0,
-        "width": 832,
-        "height": 839
-      },
-      "action": {
-        "type": "url",
-        "uri": "https://eeej.jp/villa_keisen/",
-        "altUri": {
-          "desktop": "https://eeej.jp/villa_keisen/"
-        }
-      }
-    }
-  ]
-}
-client.createRichMenu(richmenu)
-.then((richMenuId) => {
-  console.log(richMenuId)
-  console.log("0")
-  RichMenushow(richMenuId);
-})
-
+// const richmenu = {
+//   "size": {
+//     "width": 2500,
+//     "height": 843
+//   },
+//   "selected": true,
+//   "name": "リッチメニュー 1",
+//   "chatBarText": "メニュー",
+//   "areas": [
+//     {
+//       "bounds": {
+//         "x": 0,
+//         "y": 4,
+//         "width": 825,
+//         "height": 839
+//       },
+//       "action": {
+//         "type": "message",
+//         "text": "予約する"
+//       }
+//     },
+//     {
+//       "bounds": {
+//         "x": 823,
+//         "y": 0,
+//         "width": 850,
+//         "height": 839
+//       },
+//       "action": {
+//         "type": "postback",
+//         "data": "connect",
+//       }
+//     },
+//     {
+//       "bounds": {
+//         "x": 1668,
+//         "y": 0,
+//         "width": 832,
+//         "height": 839
+//       },
+//       "action": {
+//         "type": "url",
+//         "uri": "https://eeej.jp/villa_keisen/",
+//         "altUri": {
+//           "desktop": "https://eeej.jp/villa_keisen/"
+//         }
+//       }
+//     }
+//   ]
+// }
+// client.createRichMenu(richmenu)
+// .then((richMenuId) => {
+//   console.log(richMenuId)
+//   console.log("0")
+//   RichMenushow(richMenuId);
+// })
 
 client.getRichMenuList()
 	.then((richmenus) => {
