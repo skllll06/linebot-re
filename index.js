@@ -74,6 +74,12 @@ const richmenu = {
     }
   ]
 }
+client.createRichMenu(richmenu)
+.then((richMenuId) => {
+  console.log(richMenuId)
+  console.log("0")
+  RichMenushow(richMenuId);
+})
 
 //テーブル作成(userテーブル)
 const create_userTable =
@@ -99,15 +105,6 @@ function lineBot(req, res) {
   //とりあえず200番を返す
   res.status(200).end();
   // ボディからイベントを取得
-  console.log(richmenu)
-  console.log("きた???")
-  client.createRichMenu(richmenu)
-    .then((richMenuId) => {
-      console.log(richMenuId)
-      console.log("0")
-      RichMenushow(richMenuId);
-    })
-
   const events = req.body.events;
   const promises = [];
   for (let i = 0; i < events.length; i++) {
