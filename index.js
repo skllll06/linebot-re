@@ -4,6 +4,7 @@ const path = require("path");
 const PORT = process.env.PORT || 5000;
 const { Client } = require('pg');
 const line = require("@line/bot-sdk");
+var fs = require('fs');
 
 //postgresql設定
 const connection = new Client({
