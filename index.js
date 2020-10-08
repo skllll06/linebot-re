@@ -22,10 +22,22 @@ const config = {
 };
 const client = new line.Client(config);
 
+//リッチメニュー
+const richmenu = {
+  size: {
+    width: 2500,
+    height: 1686
+  },}
+client.createRichMenu(richmenu)
+  .then((richMenuId) =>
+  console.log(richMenuId))
+//デフォルトのリッチメニュー
+client.setDefaultRichMenu(richMenuId)
+
+//テーブル作成(userテーブル)
 const create_userTable = 
 { text:'CREATE TABLE IF NOT EXISTS users (id SERIAL NOT NULL, line_uid VARCHAR(255), display_name VARCHAR(255), timestamp VARCHAR(255));'
 };
-
 connection.query(create_userTable)
    .then(()=>{
        console.log('table users created successfully!!');
@@ -46,16 +58,16 @@ function lineBot(req, res) {
   res.status(200).end();
   // ボディからイベントを取得
   const events = req.body.events;
-  const promises = [];
-  for (let i = 0; i < events.length; i++) {
-    const ev = events[i];
-    switch (ev.type) {
-      case 'follow':
-        promises.push(greeting_follow(ev));
-        break;
-      case 'message':
-        promises.push(handleMessageEvent(ev));
-        break;
+    const promises = [];
+    for (let i = 0; i < events.length; i++) {
+      const ev = events[i];
+      switch (ev.type) {
+        case 'follow':
+          promises.push(greeting_follow(ev));
+          break;
+        case 'message':
+          promises.push(handleMessageEvent(ev));
+          break;
       case 'postback':
           promises.push(handlePostbackEvent(ev));
           break;
@@ -68,7 +80,6 @@ function lineBot(req, res) {
 }
 
 
-// 追加
 async function handleMessageEvent(ev) {
   //ユーザー名を取得
   const pro = await client.getProfile(ev.source.userId);
@@ -86,8 +97,18 @@ async function handleMessageEvent(ev) {
   }
 }
 
+
 const greeting_follow = async (ev) => {
   const profile = await client.getProfile(ev.source.userId);
+  const table_insert = {
+    text:'INSERT INTO users (line_uid,display_name,timestamp) VALUES($1,$2,$3);',
+    values:[ev.source.userId,pro.displayName,timeStamp]
+  };
+  connection.query(table_insert)
+    .then(()=>{
+       console.log('insert successfully!!')
+     })
+    .catch(e=>console.log(e));
   return client.replyMessage(ev.replyToken, {
     "type": "text",
     "text": `${profile.displayName}さん、フォローありがとうございます!\uDBC0\uDC04`
