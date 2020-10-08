@@ -70,15 +70,7 @@ const richmenu = {
     }
   ]
 }
-client.createRichMenu(richmenu)
-  .then((richMenuId) =>
-    console.log(richMenuId))
-    client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
-    client.getRichMenu(richMenuId)
-    .then((richMenu) => {
-      console.log(richMenu.size);
-      console.log(richMenu.areas[0].bounds);
-    })
+
 
 
 
@@ -107,6 +99,15 @@ function lineBot(req, res) {
   //とりあえず200番を返す
   res.status(200).end();
   // ボディからイベントを取得
+  client.createRichMenu(richmenu)
+  .then((richMenuId) =>
+    console.log(richMenuId))
+    client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
+    client.getRichMenu(richMenuId)
+    .then((richMenu) => {
+      console.log(richMenu.size);
+      console.log(richMenu.areas[0].bounds);
+    })
   const events = req.body.events;
   const promises = [];
   for (let i = 0; i < events.length; i++) {
