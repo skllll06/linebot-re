@@ -24,8 +24,69 @@ const config = {
 const client = new line.Client(config);
 
 //リッチメニュー
-client.deleteDefaultRichMenu()
-client.deleteRichMenu("richmenu-f4f8674aaf942ee45d980c54e7622f87")
+const richmenu = {
+  "size": {
+    "width": 2500,
+    "height": 843
+  },
+  "selected": true,
+  "name": "リッチメニュー 1",
+  "chatBarText": "メニュー",
+  "areas": [
+    {
+      "bounds": {
+        "x": 0,
+        "y": 4,
+        "width": 825,
+        "height": 839
+      },
+      "action": {
+        "type": "message",
+        "text": "予約する"
+      }
+    },
+    {
+      "bounds": {
+        "x": 823,
+        "y": 0,
+        "width": 850,
+        "height": 839
+      },
+      "action": {
+        "type": "postback",
+        "data": "connect",
+      }
+    },
+    {
+      "bounds": {
+        "x": 1668,
+        "y": 0,
+        "width": 832,
+        "height": 839
+      },
+      "action": {
+        "type": "url",
+        "uri": "https://eeej.jp/villa_keisen/",
+        "altUri": {
+          "desktop": "https://eeej.jp/villa_keisen/"
+        }
+      }
+    }
+  ]
+}
+client.createRichMenu(richmenu)
+.then((richMenuId) => {
+  console.log(richMenuId)
+  console.log("0")
+  RichMenushow(richMenuId);
+})
+
+
+client.getRichMenuList()
+	.then((richmenus) => {
+  	ids.forEach((richmenu) => console.log(richmenu));
+  })
+  
 
 //テーブル作成(userテーブル)
 const create_userTable =
