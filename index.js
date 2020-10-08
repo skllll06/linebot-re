@@ -1,3 +1,4 @@
+//stormy-ravine-05057設定
 const express = require("express");
 const path = require("path");
 const PORT = process.env.PORT || 5000;
@@ -61,7 +62,9 @@ async function handleMessageEvent(ev) {
   //返事を送信
   if (text === '予約する') {
     orderChoice(ev);
-  } else {
+  }else if (text === 'ALFAを予約' || text === 'BETAを予約') {
+    askDate(ev,text);
+  }else {
     return client.replyMessage(ev.replyToken, {
       type: "text",
       text: `${pro.displayName}さん、今「${ev.message.text}」って言いました？`
@@ -123,7 +126,7 @@ const orderChoice = (ev) => {
                 "action": {
                   "type": "message",
                   "label": "予約する",
-                  "text": "ALFA"
+                  "text": "ALFAを予約"
                 },
                 "style": "primary"
               },
@@ -175,7 +178,7 @@ const orderChoice = (ev) => {
                 "action": {
                   "type": "message",
                   "label": "予約する",
-                  "text": "BETA"
+                  "text": "BETAを予約"
                 },
                 "style": "primary"
               },
@@ -213,4 +216,42 @@ const orderChoice = (ev) => {
       ]
     }
   });
+}
+
+const askDate = (ev,orderedMenu) => {
+return client.replyMessage(ev.replyToken,{
+  "type":"flex",
+  "altText":"予約日選択",
+  "contents":
+  {
+      "type": "bubble",
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "来店希望日を選んでください。",
+            "size": "md",
+            "align": "center"
+          }
+        ]
+      },
+      "footer": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "button",
+            "action": {
+              "type": "datetimepicker",
+              "label": "希望日を選択する",
+              "data": `date&${orderedMenu}`,
+              "mode": "date"
+            }
+          }
+        ]
+      }
+    }
+});
 }
