@@ -143,9 +143,6 @@ async function handleMessageEvent(ev) {
 }
 
 const RichMenushow = function (richMenuId) { 
-  client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
-  .then((richMenu) => {
-    console.log('0');
     client.getRichMenu(richMenuId)
     .then((richMenu) => {
       console.log('①');
@@ -160,7 +157,7 @@ const RichMenushow = function (richMenuId) {
       })
     })
   })
-})
+
 
   
   
