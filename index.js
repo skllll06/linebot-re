@@ -42,7 +42,7 @@ const richmenu = {
       },
       "action": {
         "type": "message",
-        "text": "アクション 1"
+        "text": "予約する"
       }
     },
     {
@@ -53,8 +53,8 @@ const richmenu = {
         "height": 839
       },
       "action": {
-        "type": "message",
-        "text": "アクション 2"
+        "type": "postback",
+        "data": "connect",
       }
     },
     {
@@ -65,8 +65,11 @@ const richmenu = {
         "height": 839
       },
       "action": {
-        "type": "message",
-        "text": "アクション 3"
+        "type": "url",
+        "uri": "https://eeej.jp/villa_keisen/",
+        "altUri": {
+          "desktop": "https://eeej.jp/villa_keisen/"
+        }
       }
     }
   ]
@@ -101,7 +104,7 @@ function lineBot(req, res) {
       console.log(richMenuId)
       RichMenushow(richMenuId);
     })
- 
+
   const events = req.body.events;
   const promises = [];
   for (let i = 0; i < events.length; i++) {
@@ -142,25 +145,25 @@ async function handleMessageEvent(ev) {
   }
 }
 
-const RichMenushow = function (richMenuId) { 
-    client.getRichMenu(richMenuId)
+const RichMenushow = function (richMenuId) {
+  client.getRichMenu(richMenuId)
     .then((richMenu) => {
       console.log('①');
-    console.log(richMenu.size);
-    console.log(richMenu.areas[0].bounds);
-    client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
-      .then((richMenu) => {
-        console.log('②');
-      client.setDefaultRichMenu(richMenuId)
+      console.log(richMenu.size);
+      console.log(richMenu.areas[0].bounds);
+      client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
         .then((richMenu) => {
-          console.log('③');
-      })
+          console.log('②');
+          client.setDefaultRichMenu(richMenuId)
+            .then((richMenu) => {
+              console.log('③');
+            })
+        })
     })
-  })
 
 
-  
-  
+
+
 }
 
 const greeting_follow = async (ev) => {
@@ -492,7 +495,7 @@ const confirmation = (ev, menu, date, time) => {
         "contents": [
           {
             "type": "text",
-            "text": `予約内容は${splitDate[1]}月${splitDate[2]}日 ${selectedTime}でよろしいですか？`,
+            "text": `予約内容は${menu}の${splitDate[1]}月${splitDate[2]}日 ${selectedTime}でよろしいですか？`,
             "size": "lg",
             "wrap": true
           }
