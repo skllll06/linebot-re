@@ -1,4 +1,4 @@
-//stormy-ravine-05057設定
+//設定
 const express = require("express");
 const path = require("path");
 const PORT = process.env.PORT || 5000;
@@ -24,10 +24,51 @@ const client = new line.Client(config);
 
 //リッチメニュー
 const richmenu = {
-  size: {
-    width: 2500,
-    height: 1686
+  "size": {
+    "width": 2500,
+    "height": 843
   },
+  "selected": true,
+  "name": "リッチメニュー 1",
+  "chatBarText": "お知らせ",
+  "areas": [
+    {
+      "bounds": {
+        "x": 0,
+        "y": 4,
+        "width": 825,
+        "height": 839
+      },
+      "action": {
+        "type": "message",
+        "text": "アクション 1"
+      }
+    },
+    {
+      "bounds": {
+        "x": 823,
+        "y": 0,
+        "width": 850,
+        "height": 839
+      },
+      "action": {
+        "type": "message",
+        "text": "アクション 2"
+      }
+    },
+    {
+      "bounds": {
+        "x": 1668,
+        "y": 0,
+        "width": 832,
+        "height": 839
+      },
+      "action": {
+        "type": "message",
+        "text": "アクション 3"
+      }
+    }
+  ]
 }
 client.createRichMenu(richmenu)
   .then((richMenuId) =>
