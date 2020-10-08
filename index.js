@@ -143,15 +143,14 @@ async function handleMessageEvent(ev) {
 }
 
 const RichMenushow = function (richMenuId) { 
-  console.log(richMenuId)
   client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
   client.getRichMenu(richMenuId)
   .then((richMenu) => {
     console.log(richMenu.size);
     console.log(richMenu.areas[0].bounds);
-    client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
-    client.setDefaultRichMenu(richMenuId)
   })
+  client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
+  client.setDefaultRichMenu(richMenuId)
 }
 
 const greeting_follow = async (ev) => {
