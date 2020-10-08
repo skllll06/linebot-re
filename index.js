@@ -71,10 +71,6 @@ const richmenu = {
   ]
 }
 
-
-
-
-
 //テーブル作成(userテーブル)
 const create_userTable =
 {
@@ -100,14 +96,11 @@ function lineBot(req, res) {
   res.status(200).end();
   // ボディからイベントを取得
   client.createRichMenu(richmenu)
-  .then((richMenuId) =>
-    console.log(richMenuId))
-    // client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
-    // client.getRichMenu(richMenuId)
-    // .then((richMenu) => {
-    //   console.log(richMenu.size);
-    //   console.log(richMenu.areas[0].bounds);
-    // })
+    .then((richMenuId) => {
+      console.log(richMenuId)
+      RichMenushow();
+    })
+ 
   const events = req.body.events;
   const promises = [];
   for (let i = 0; i < events.length; i++) {
@@ -148,6 +141,15 @@ async function handleMessageEvent(ev) {
   }
 }
 
+const RichMenushow = function () { 
+  console.log(richMenuId)
+  client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
+  client.getRichMenu(richMenuId)
+  .then((richMenu) => {
+    console.log(richMenu.size);
+    console.log(richMenu.areas[0].bounds);
+  })
+}
 
 const greeting_follow = async (ev) => {
   const profile = await client.getProfile(ev.source.userId);
