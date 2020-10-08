@@ -73,14 +73,14 @@ const richmenu = {
 client.createRichMenu(richmenu)
   .then((richMenuId) =>
     console.log(richMenuId))
+    client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
+    client.getRichMenu(richMenuId)
+    .then((richMenu) => {
+      console.log(richMenu.size);
+      console.log(richMenu.areas[0].bounds);
+    })
 
-client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
 
-client.getRichMenu(richMenuId)
-  .then((richMenu) => {
-    console.log(richMenu.size);
-    console.log(richMenu.areas[0].bounds);
-  })
 
 
 //テーブル作成(userテーブル)
