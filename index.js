@@ -304,12 +304,15 @@ const handlePostbackEvent = async (ev) => {
           "text":"予約が完了しました。"
         });
       })
-      .catch(e => console.log(e));
+      .catch(e => {
+        console.log(e)
         console.log('データ格納失敗');
         client.replyMessage(ev.replyToken,{
           "type":"text",
           "text":"予約に失敗しました。\n申し訳ございませんが初めからお願いします。"
       });
+    });
+        
   } else if (splitData[0] === 'no') {
     client.replyMessage(ev.replyToken,{
       "type":"text",
