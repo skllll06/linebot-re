@@ -279,7 +279,7 @@ const handlePostbackEvent = async (ev) => {
     const selectedDate = splitData[2];
     const selectedTime = splitData[3];
     const insertQuery = {
-      text:'INSERT INTO reservations (line_uid, scheduledate, scheduletime, place) VALUES($1,$2,$3,$4,$5);',
+      text:'INSERT INTO reservations (line_uid, scheduledate, scheduletime, place) VALUES($1,$2,$3,$4);',
       values:[ev.source.userId,selectedDate,selectedTime,orderedPlace]
     };
     connection.query(insertQuery)
