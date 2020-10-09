@@ -279,7 +279,7 @@ const handlePostbackEvent = async (ev) => {
     const selectedDate = splitData[2];
     const selectedTime = splitData[3];
     let insertQuery
-    if (selectedTime === 2) {
+    if (selectedTime === '2') {
       console.log(selectedTime)
       insertQuery = {
         text: 'INSERT INTO reservations (line_uid, scheduledate, scheduletime, place) VALUES($1,$2,$3,$4),($1,$2,$5,$4);',
@@ -297,21 +297,24 @@ const handlePostbackEvent = async (ev) => {
     };
     
     connection.query(insertQuery)
-         .then(res=>{
-           console.log('データ格納成功！');
-           client.replyMessage(ev.replyToken,{
-             "type":"text",
-             "text":"予約が完了しました。"
-           });
-         })
+      .then(res=>{
+        console.log('データ格納成功！');
+        client.replyMessage(ev.replyToken,{
+          "type":"text",
+          "text":"予約が完了しました。"
+        });
+      })
       .catch(e => console.log(e));
         console.log('データ格納失敗');
         client.replyMessage(ev.replyToken,{
           "type":"text",
           "text":"予約に失敗しました。\n申し訳ございませんが初めからお願いします。"
-        });
+      });
   } else if (splitData[0] === 'no') {
-    // 処理
+    client.replyMessage(ev.replyToken,{
+      "type":"text",
+      "text":"予約を終了しました。"
+  });
   }
 }
 
