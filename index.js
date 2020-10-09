@@ -418,7 +418,7 @@ const askTime = (ev, orderedPlace, selectedDate) => {
 }
 
 const confirmation = (ev, orderedPlace, selectedDate, selectedTime) => {
-  const strTime
+  let strTime
   switch (selectedTime) {
     case '0':
       strTime = "8:00~12:00";
