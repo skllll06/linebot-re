@@ -102,10 +102,10 @@ const greeting_follow = async (ev) => {
       console.log('insert successfully!!')
     })
     .catch(e => console.log(e));
-  connection.query(table_select)
+  connection.query(table_select,(err, res))
     .then(() => {
       console.log('insert successfully!!')
-      console.log(res.)
+      console.log(res)
     })
     .catch(e => console.log(e));
   return client.replyMessage(ev.replyToken, {
