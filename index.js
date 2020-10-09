@@ -280,15 +280,20 @@ const handlePostbackEvent = async (ev) => {
     const selectedTime = splitData[3];
     let insertQuery
     if (selectedTime === 2) {
+      console.log(selectedTime)
       insertQuery = {
         text: 'INSERT INTO reservations (line_uid, scheduledate, scheduletime, place) VALUES($1,$2,$3,$4),($1,$2,$5,$4);',
         values: [ev.source.userId, selectedDate, 0 , orderedPlace, 1]
       };
+      console.log(selectedTime)
+      console.log(insertQuery)
     } else {
       insertQuery = {
         text:'INSERT INTO reservations (line_uid, scheduledate, scheduletime, place) VALUES($1,$2,$3,$4);',
         values:[ev.source.userId,selectedDate,selectedTime,orderedPlace]
       };
+      console.log(selectedTime)
+      console.log(insertQuery)
     };
     
     connection.query(insertQuery)
