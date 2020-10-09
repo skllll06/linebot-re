@@ -93,7 +93,7 @@ const greeting_follow = async (ev) => {
   const profile = await client.getProfile(ev.source.userId);
   const table_insert = {
     text: 'INSERT INTO users (line_uid,display_name,timestamp) VALUES($1,$2,$3);',
-    values: [ev.source.userId, profile.displayName, timeStamp]
+    values: [ev.source.userId, profile.displayName, profile.timeStamp]
   };
   const table_select = "select * from users"
   console.log(table_insert)
