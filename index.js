@@ -6,6 +6,7 @@ const { Client } = require('pg');
 const line = require("@line/bot-sdk");
 var fs = require('fs');
 var ids = require('ids');
+const { resolve } = require("path");
 
 //postgresql設定
 const connection = new Client({
@@ -320,6 +321,11 @@ const handlePostbackEvent = async (ev) => {
   });
   }else if (splitData[0] === 'richconfirm') {
     console.log("予約確認")
+    const nextResrvation = await checkPersonalReservation(ev);
+    return client.replyMessage(ev.replyToken,{
+      "type":"text",
+      "text":nextResrvation
+    });
   };
 }
 
@@ -500,5 +506,24 @@ const confirmation = (ev, orderedPlace, selectedDate, selectedTime) => {
         ]
       }
     }
+  });
+}
+
+const checkPersonalReservation = (ev) => {
+  return new Promise((resolve, rejext) => {
+    const id = ev.source.userId;
+    const nowTime = new Date().getTime();
+    const selectQuery = {
+      text: 'SELECT * FROM reservations WHERE line_uid = $1 ORDER BY scheduledate ASC;',
+      values: [`${id}`]
+    };
+    connection.query(selectQuery)
+      .then(res => {
+        const nextRearvation = res.rows.filter(object => {
+          return parseInt(object.scheduledate) >= nowTime;
+        });
+        resolve(nextRearvation);
+      })
+    .catch(e=>console.log(e))
   });
 }
