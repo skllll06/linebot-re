@@ -93,7 +93,7 @@ const greeting_follow = async (ev) => {
   const profile = await client.getProfile(ev.source.userId);
   const table_insert = {
     text: 'INSERT INTO users (line_uid,display_name,timestamp) VALUES($1,$2,$3);',
-    values: [ev.source.userId, profile.displayName, profile.timeStamp]
+    values: [ev.source.userId, profile.displayName, ev.timestamp]
   };
   const table_select = "select * from users"
   console.log(table_insert)
@@ -105,7 +105,7 @@ const greeting_follow = async (ev) => {
   connection.query(table_select)
     .then(() => {
       console.log('insert successfully!!')
-      console.log(res)
+      console.log(res.)
     })
     .catch(e => console.log(e));
   return client.replyMessage(ev.replyToken, {
