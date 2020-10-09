@@ -418,6 +418,7 @@ const askTime = (ev, orderedPlace, selectedDate) => {
 }
 
 const confirmation = (ev, orderedPlace, selectedDate, selectedTime) => {
+  const splitDate = selectedDate.split('-');
   let strTime
   switch (selectedTime) {
     case '0':
