@@ -44,7 +44,7 @@ connection.query(create_userTable)
 
   //テーブル作成(userテーブル)
   const create_reservationTable = {
-    text:'CREATE TABLE IF NOT EXISTS reservations (id SERIAL NOT NULL, line_uid VARCHAR(255), scheduledate DATE, scheduletime VARCHAR(50), place VARCHAR(50) PRIMARY KEY (scheduledate, scheduletime, place));'
+    text:'CREATE TABLE IF NOT EXISTS reservations (id SERIAL NOT NULL, line_uid VARCHAR(255), scheduledate DATE, scheduletime VARCHAR(50), place VARCHAR(50),PRIMARY KEY(scheduledate, scheduletime, place));'
   };
 connection.query(create_reservationTable)
   .then(()=>{
