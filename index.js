@@ -34,7 +34,7 @@ const client = new line.Client(config);
 //テーブル作成(userテーブル)
 const create_userTable =
 {
-  text: 'CREATE TABLE IF NOT EXISTS users (id SERIAL NOT NULL, line_uid VARCHAR(255), display_name VARCHAR(255), timestamp VARCHAR(255));'
+  text: 'CREATE TABLE IF NOT EXISTS users (id SERIAL NOT NULL, line_uid VARCHAR(255)  PRIMARY KEY , display_name VARCHAR(255), timestamp VARCHAR(255);'
 };
 connection.query(create_userTable)
   .then(() => {
@@ -44,7 +44,7 @@ connection.query(create_userTable)
 
   //テーブル作成(userテーブル)
   const create_reservationTable = {
-    text:'CREATE TABLE IF NOT EXISTS reservations (id SERIAL NOT NULL, line_uid VARCHAR(255), scheduledate DATE, scheduletime VARCHAR(50), place VARCHAR(50));'
+    text:'CREATE TABLE IF NOT EXISTS reservations (id SERIAL NOT NULL, line_uid VARCHAR(255), scheduledate DATE, scheduletime VARCHAR(50), place VARCHAR(50) PRIMARY KEY ( scheduledate,scheduletime,place ));'
   };
 connection.query(create_reservationTable)
   .then(()=>{
@@ -119,35 +119,6 @@ async function handleMessageEvent(ev) {
     });
   }
 }
-
-
-const handlePostbackEvent = async (ev) => {
-  const profile = await client.getProfile(ev.source.userId);
-  const data = ev.postback.data;
-  const splitData = data.split('&');
-
-  if (splitData[0] === 'place') {
-    const orderedMenu = splitData[1];
-    askDate(ev, orderedMenu);
-  } else if (splitData[0] === 'date') {
-    const orderedMenu = splitData[1];
-    const selectedDate = ev.postback.params.date;
-    askTime(ev, orderedMenu, selectedDate);
-  } else if (splitData[0] === 'time') {
-    const orderedMenu = splitData[1];
-    const selectedDate = splitData[2];
-    const selectedTime = splitData[3];
-    confirmation(ev, orderedMenu, selectedDate, selectedTime);
-  } else if (splitData[0] === 'yes') {
-    const orderedMenu = splitData[1];
-    const selectedDate = splitData[2];
-    const selectedTime = splitData[3];
-
-  } else if (splitData[0] === 'no') {
-    // 処理
-  }
-}
-
 
 const orderChoice = (ev) => {
   return client.replyMessage(ev.replyToken, {
@@ -286,7 +257,46 @@ const orderChoice = (ev) => {
   });
 }
 
-const askDate = (ev, orderedMenu) => {
+const handlePostbackEvent = async (ev) => {
+  const profile = await client.getProfile(ev.source.userId);
+  const data = ev.postback.data;
+  const splitData = data.split('&');
+
+  if (splitData[0] === 'place') {
+    const orderedPlace = splitData[1];
+    askDate(ev, orderedPlace);
+  } else if (splitData[0] === 'date') {
+    const orderedPlace = splitData[1];
+    const selectedDate = ev.postback.params.date;
+    askTime(ev, orderedPlace, selectedDate);
+  } else if (splitData[0] === 'time') {
+    const orderedPlace = splitData[1];
+    const selectedDate = splitData[2];
+    const selectedTime = splitData[3];
+    confirmation(ev, orderedPlace, selectedDate, selectedTime);
+  } else if (splitData[0] === 'yes') {
+    const orderedPlace = splitData[1];
+    const selectedDate = splitData[2];
+    const selectedTime = splitData[3];
+    const insertQuery = {
+      text:'INSERT INTO reservations (line_uid, scheduledate, scheduletime, menu) VALUES($1,$2,$3,$4,$5);',
+      values:[ev.source.userId,selectedDate,selectedTime,orderedPlace]
+    };
+    connection.query(insertQuery)
+         .then(res=>{
+           console.log('データ格納成功！');
+           client.replyMessage(ev.replyToken,{
+             "type":"text",
+             "text":"予約が完了しました。"
+           });
+         })
+         .catch(e=>console.log(e));
+  } else if (splitData[0] === 'no') {
+    // 処理
+  }
+}
+
+const askDate = (ev, orderedPlace) => {
   return client.replyMessage(ev.replyToken, {
     "type": "flex",
     "altText": "予約日選択",
@@ -314,7 +324,7 @@ const askDate = (ev, orderedMenu) => {
             "action": {
               "type": "datetimepicker",
               "label": "希望日を選択する",
-              "data": `date&${orderedMenu}`,
+              "data": `date&${orderedPlace}`,
               "mode": "date"
             }
           }
@@ -324,7 +334,7 @@ const askDate = (ev, orderedMenu) => {
   });
 }
 
-const askTime = (ev, orderedMenu, selectedDate) => {
+const askTime = (ev, orderedPlace, selectedDate) => {
   return client.replyMessage(ev.replyToken, {
     "type": "flex",
     "altText": "予約時間選択",
@@ -359,7 +369,7 @@ const askTime = (ev, orderedMenu, selectedDate) => {
                 "action": {
                   "type": "postback",
                   "label": "午前(8:00~12:00)",
-                  "data": `time&${orderedMenu}&${selectedDate}&0`
+                  "data": `time&${orderedPlace}&${selectedDate}&0`
                 },
                 "style": "primary",
                 "color": "#00AA00",
@@ -370,7 +380,7 @@ const askTime = (ev, orderedMenu, selectedDate) => {
                 "action": {
                   "type": "postback",
                   "label": "午後(13:00~17:00)",
-                  "data": `time&${orderedMenu}&${selectedDate}&1`
+                  "data": `time&${orderedPlace}&${selectedDate}&1`
                 },
                 "style": "primary",
                 "color": "#00AA00",
@@ -381,7 +391,7 @@ const askTime = (ev, orderedMenu, selectedDate) => {
                 "action": {
                   "type": "postback",
                   "label": "終日(8:00~17:00)",
-                  "data": `time&${orderedMenu}&${selectedDate}&2`
+                  "data": `time&${orderedPlace}&${selectedDate}&2`
                 },
                 "style": "primary",
                 "color": "#00AA00",
@@ -407,18 +417,18 @@ const askTime = (ev, orderedMenu, selectedDate) => {
   });
 }
 
-const confirmation = (ev, menu, date, time) => {
+const confirmation = (ev, orderedPlace, selectedDate, selectedTime) => {
   const splitDate = date.split('-');
-  let selectedTime
+  let strTime
   switch (time) {
     case '0':
-      selectedTime = "8:00~12:00";
+      strTime = "8:00~12:00";
       break;
     case '1':
-      selectedTime = "13:00~17:00";
+      strTime = "13:00~17:00";
       break;
     case '2':
-      selectedTime = "8:00~17:00";
+      strTime = "8:00~17:00";
       break;
   }
   return client.replyMessage(ev.replyToken, {
@@ -433,7 +443,7 @@ const confirmation = (ev, menu, date, time) => {
         "contents": [
           {
             "type": "text",
-            "text": `予約内容は${placeDic[menu]}の${splitDate[1]}月${splitDate[2]}日 ${selectedTime}でよろしいですか？`,
+            "text": `予約内容は${placeDic[orderedPlace]}の${splitDate[1]}月${splitDate[2]}日 ${strTime}でよろしいですか？`,
             "size": "lg",
             "wrap": true
           }
@@ -448,7 +458,7 @@ const confirmation = (ev, menu, date, time) => {
             "action": {
               "type": "postback",
               "label": "はい",
-              "data": `yes&${menu}&${date}&${time}`
+              "data": `yes&${orderedPlace}&${selectedDate}&${selectedTime}`
             }
           },
           {
@@ -456,7 +466,7 @@ const confirmation = (ev, menu, date, time) => {
             "action": {
               "type": "postback",
               "label": "いいえ",
-              "data": `no&${menu}&${date}&${time}`
+              "data": `no&${orderedPlace}&${selectedDate}&${selectedTime}`
             }
           }
         ]
