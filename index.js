@@ -318,8 +318,11 @@ const handlePostbackEvent = async (ev) => {
       "type":"text",
       "text":"予約を終了しました。"
   });
-  }
+  }else if (splitData[0] === 'richconfirm') {
+    console.log("予約確認")
+  };
 }
+
 
 const askDate = (ev, orderedPlace) => {
   return client.replyMessage(ev.replyToken, {
