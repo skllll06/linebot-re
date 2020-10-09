@@ -24,70 +24,7 @@ const config = {
 };
 const client = new line.Client(config);
 
-//リッチメニュー
-const richmenu = {
-  "size": {
-    "width": 2500,
-    "height": 843
-  },
-  "selected": true,
-  "name": "リッチメニュー 1",
-  "chatBarText": "メニュー",
-  "areas": [
-    {
-      "bounds": {
-        "x": 0,
-        "y": 4,
-        "width": 825,
-        "height": 839
-      },
-      "action": {
-        "type": "message",
-        "text": "予約する"
-      }
-    },
-    {
-      "bounds": {
-        "x": 823,
-        "y": 0,
-        "width": 850,
-        "height": 839
-      },
-      "action": {
-        "type": "postback",
-        "data": "connect",
-      }
-    },
-    {
-      "bounds": {
-        "x": 1668,
-        "y": 0,
-        "width": 832,
-        "height": 839
-      },
-      "action": {
-        "type": "url",
-        "uri": "https://eeej.jp/villa_keisen/",
-        "altUri": {
-          "desktop": "https://eeej.jp/villa_keisen/"
-        }
-      }
-    }
-  ]
-}
-client.createRichMenu(richmenu)
-.then((richMenuId) => {
-  console.log(richMenuId)
-  console.log("0")
-  RichMenushow(richMenuId);
-})
-
-// client.getRichMenuList()
-// 	.then((richmenus) => {
-//     ids.forEach((richmenu) => console.log(richmenu));
-//   })
   
-
 //テーブル作成(userテーブル)
 const create_userTable =
 {
@@ -152,36 +89,23 @@ async function handleMessageEvent(ev) {
   }
 }
 
-const RichMenushow = function (richMenuId) {
-  client.getRichMenu(richMenuId)
-    .then((richMenu) => {
-      console.log('①');
-      console.log(richMenu.size);
-      console.log(richMenu.areas[0].bounds);
-      client.setRichMenuImage(richMenuId, fs.createReadStream('./images/richmenu_def.jpg'))
-        .then((richMenu) => {
-          console.log('②');
-          client.setDefaultRichMenu(richMenuId)
-            .then((richMenu) => {
-              console.log('③');
-            })
-        })
-    })
-
-
-
-
-}
-
 const greeting_follow = async (ev) => {
   const profile = await client.getProfile(ev.source.userId);
   const table_insert = {
     text: 'INSERT INTO users (line_uid,display_name,timestamp) VALUES($1,$2,$3);',
     values: [ev.source.userId, pro.displayName, timeStamp]
   };
-  connection.query(table_insert)
+  const table_select = "select * from users"
+  console.log(table_insert)
+  connection.query(table_insert,(err, res))
     .then(() => {
       console.log('insert successfully!!')
+    })
+    .catch(e => console.log(e));
+  connection.query(table_select)
+    .then(() => {
+      console.log('insert successfully!!')
+      console.log(res)
     })
     .catch(e => console.log(e));
   return client.replyMessage(ev.replyToken, {
