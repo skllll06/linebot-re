@@ -74,7 +74,7 @@ function lineBot(req, res) {
 
 async function handleMessageEvent(ev) {
   //ユーザー名を取得
-  const pro = await client.getProfile(ev.source.userId);
+  const profile = await client.getProfile(ev.source.userId);
   const text = (ev.message.type === 'text') ? ev.message.text : '';
   //返事を送信
   if (text === '予約する') {
@@ -84,7 +84,7 @@ async function handleMessageEvent(ev) {
   } else {
     return client.replyMessage(ev.replyToken, {
       type: "text",
-      text: `${pro.displayName}さん、今「${ev.message.text}」って言いました？`
+      text: `${profile.displayName}さん、今「${ev.message.text}」って言いました？`
     });
   }
 }
