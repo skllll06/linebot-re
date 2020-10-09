@@ -279,7 +279,7 @@ const handlePostbackEvent = async (ev) => {
     const selectedDate = splitData[2];
     const selectedTime = splitData[3];
     let insertQuery
-    if (selectedTime === 3) {
+    if (selectedTime === 2) {
       insertQuery = {
         text: 'INSERT INTO reservations (line_uid, scheduledate, scheduletime, place) VALUES($1,$2,$3,$4),($1,$2,$5,$4);',
         values: [ev.source.userId, selectedDate, 0 , orderedPlace, 1]
