@@ -97,15 +97,14 @@ const greeting_follow = async (ev) => {
   };
   const table_select = "select * from users"
   console.log(table_insert)
-  connection.query(table_insert,(err, res))
+  connection.query(table_insert)
     .then(() => {
       console.log('insert successfully!!')
     })
     .catch(e => console.log(e));
-  connection.query(table_select,(err, res))
+  connection.query(table_select)
     .then(() => {
       console.log('insert successfully!!')
-      console.log(res)
     })
     .catch(e => console.log(e));
   return client.replyMessage(ev.replyToken, {
