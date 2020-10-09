@@ -17,6 +17,12 @@ const connection = new Client({
 });
 connection.connect();
 
+//施設の辞書
+const placeDic = {
+  0: 'ALFA-岡山',
+  1: 'BETA-広島'
+};
+
 //LINE API設定
 const config = {
   channelAccessToken: process.env.ACCESS_TOKEN,
@@ -35,6 +41,16 @@ connection.query(create_userTable)
     console.log('table users created successfully!!');
   })
   .catch(e => console.log(e));
+
+  //テーブル作成(userテーブル)
+  const create_reservationTable = {
+    text:'CREATE TABLE IF NOT EXISTS reservations (id SERIAL NOT NULL, line_uid VARCHAR(255), scheduledate DATE, scheduletime VARCHAR(50), place VARCHAR(50));'
+  };
+connection.query(create_reservationTable)
+  .then(()=>{
+      console.log('table reservation created successfully!!');
+  })
+  .catch(e=>console.log(e));
 
 express()
   .use(express.static(path.join(__dirname, "public")))
@@ -71,38 +87,14 @@ function lineBot(req, res) {
     .catch(e => console.error(e.stack));
 }
 
-
-async function handleMessageEvent(ev) {
-  //ユーザー名を取得
-  const profile = await client.getProfile(ev.source.userId);
-  const text = (ev.message.type === 'text') ? ev.message.text : '';
-  //返事を送信
-  if (text === '予約する') {
-    orderChoice(ev);
-  } else if (text === 'ALFAを予約' || text === 'BETAを予約') {
-    askDate(ev, text);
-  } else {
-    return client.replyMessage(ev.replyToken, {
-      type: "text",
-      text: `${profile.displayName}さん、今「${ev.message.text}」って言いました？`
-    });
-  }
-}
-
 const greeting_follow = async (ev) => {
   const profile = await client.getProfile(ev.source.userId);
   const table_insert = {
     text: 'INSERT INTO users (line_uid,display_name,timestamp) VALUES($1,$2,$3);',
     values: [ev.source.userId, profile.displayName, ev.timestamp]
   };
-  const table_select = "select * from users"
   console.log(table_insert)
   connection.query(table_insert)
-    .then(() => {
-      console.log('insert successfully!!')
-    })
-    .catch(e => console.log(e));
-  connection.query(table_select)
     .then(() => {
       console.log('insert successfully!!')
     })
@@ -113,12 +105,28 @@ const greeting_follow = async (ev) => {
   });
 }
 
+async function handleMessageEvent(ev) {
+  //ユーザー名を取得
+  const profile = await client.getProfile(ev.source.userId);
+  const text = (ev.message.type === 'text') ? ev.message.text : '';
+  //返事を送信
+  if (text === '予約する') {
+    orderChoice(ev);
+  } else {
+    return client.replyMessage(ev.replyToken, {
+      type: "text",
+      text: `${profile.displayName}さん、今「${ev.message.text}」って言いました？`
+    });
+  }
+}
+
+
 const handlePostbackEvent = async (ev) => {
   const profile = await client.getProfile(ev.source.userId);
   const data = ev.postback.data;
   const splitData = data.split('&');
 
-  if (splitData[0] === 'menu') {
+  if (splitData[0] === 'place') {
     const orderedMenu = splitData[1];
     askDate(ev, orderedMenu);
   } else if (splitData[0] === 'date') {
@@ -184,9 +192,9 @@ const orderChoice = (ev) => {
               {
                 "type": "button",
                 "action": {
-                  "type": "message",
+                  "type": "postback",
                   "label": "予約する",
-                  "text": "ALFAを予約"
+                  "data": "place&0"
                 },
                 "style": "primary"
               },
@@ -236,9 +244,9 @@ const orderChoice = (ev) => {
               {
                 "type": "button",
                 "action": {
-                  "type": "message",
+                  "type": "postback",
                   "label": "予約する",
-                  "text": "BETAを予約"
+                  "data": "place&1"
                 },
                 "style": "primary"
               },
@@ -425,7 +433,7 @@ const confirmation = (ev, menu, date, time) => {
         "contents": [
           {
             "type": "text",
-            "text": `予約内容は${menu}の${splitDate[1]}月${splitDate[2]}日 ${selectedTime}でよろしいですか？`,
+            "text": `予約内容は${placeDic[menu]}の${splitDate[1]}月${splitDate[2]}日 ${selectedTime}でよろしいですか？`,
             "size": "lg",
             "wrap": true
           }
