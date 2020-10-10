@@ -31,7 +31,7 @@ const config = {
 };
 const client = new line.Client(config);
 
-  
+
 //テーブル作成(userテーブル)
 const create_userTable =
 {
@@ -43,15 +43,15 @@ connection.query(create_userTable)
   })
   .catch(e => console.log(e));
 
-  //テーブル作成(userテーブル)
-  const create_reservationTable = {
-    text:'CREATE TABLE IF NOT EXISTS reservations (id SERIAL NOT NULL, line_uid VARCHAR(255), scheduledate DATE, scheduletime VARCHAR(50), place VARCHAR(50),PRIMARY KEY(scheduledate, scheduletime, place));'
-  };
+//テーブル作成(userテーブル)
+const create_reservationTable = {
+  text: 'CREATE TABLE IF NOT EXISTS reservations (id SERIAL NOT NULL, line_uid VARCHAR(255), scheduledate DATE, scheduletime VARCHAR(50), place VARCHAR(50),PRIMARY KEY(scheduledate, scheduletime, place));'
+};
 connection.query(create_reservationTable)
-  .then(()=>{
-      console.log('table reservation created successfully!!');
+  .then(() => {
+    console.log('table reservation created successfully!!');
   })
-  .catch(e=>console.log(e));
+  .catch(e => console.log(e));
 
 express()
   .use(express.static(path.join(__dirname, "public")))
@@ -284,47 +284,47 @@ const handlePostbackEvent = async (ev) => {
       console.log(selectedTime)
       insertQuery = {
         text: 'INSERT INTO reservations (line_uid, scheduledate, scheduletime, place) VALUES($1,$2,$3,$4),($1,$2,$5,$4);',
-        values: [ev.source.userId, selectedDate, 0 , orderedPlace, 1]
+        values: [ev.source.userId, selectedDate, 0, orderedPlace, 1]
       };
       console.log(selectedTime)
       console.log(insertQuery)
     } else {
       insertQuery = {
-        text:'INSERT INTO reservations (line_uid, scheduledate, scheduletime, place) VALUES($1,$2,$3,$4);',
-        values:[ev.source.userId,selectedDate,selectedTime,orderedPlace]
+        text: 'INSERT INTO reservations (line_uid, scheduledate, scheduletime, place) VALUES($1,$2,$3,$4);',
+        values: [ev.source.userId, selectedDate, selectedTime, orderedPlace]
       };
       console.log(selectedTime)
       console.log(insertQuery)
     };
-    
+
     connection.query(insertQuery)
-      .then(res=>{
+      .then(res => {
         console.log('データ格納成功！');
-        client.replyMessage(ev.replyToken,{
-          "type":"text",
-          "text":"予約が完了しました。"
+        client.replyMessage(ev.replyToken, {
+          "type": "text",
+          "text": "予約が完了しました。"
         });
       })
       .catch(e => {
         console.log(e)
         console.log('データ格納失敗');
-        client.replyMessage(ev.replyToken,{
-          "type":"text",
-          "text":"予約に失敗しました。\n申し訳ございませんが初めからお願いします。"
+        client.replyMessage(ev.replyToken, {
+          "type": "text",
+          "text": "予約に失敗しました。\n申し訳ございませんが初めからお願いします。"
+        });
       });
-    });
-        
+
   } else if (splitData[0] === 'no') {
-    client.replyMessage(ev.replyToken,{
-      "type":"text",
-      "text":"予約を終了しました。"
-  });
-  }else if (splitData[0] === 'richconfirm') {
+    client.replyMessage(ev.replyToken, {
+      "type": "text",
+      "text": "予約を終了しました。"
+    });
+  } else if (splitData[0] === 'richconfirm') {
     console.log("予約確認")
     const nextResrvation = await checkPersonalReservation(ev);
-    return client.replyMessage(ev.replyToken,{
-      "type":"text",
-      "text":nextResrvation
+    return client.replyMessage(ev.replyToken, {
+      "type": "text",
+      "text": nextResrvation
     });
   };
 }
@@ -522,10 +522,11 @@ const checkPersonalReservation = (ev) => {
       .then(res => {
         console.log("select成功")
         const nextRearvation = res.rows.filter(object => {
+          console.log("ここまできたよ")
           return parseInt(object.scheduledate) >= nowTime;
         });
         resolve(nextRearvation);
       })
-    .catch(e=>console.log(e))
+      .catch(e => console.log(e))
   });
 }
