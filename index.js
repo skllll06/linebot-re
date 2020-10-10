@@ -514,17 +514,16 @@ const checkPersonalReservation = (ev) => {
   return new Promise((resolve, rejext) => {
     const id = ev.source.userId;
     const nowTime = new Date();
-    console.log(nowTime)
     const selectQuery = {
       text: 'SELECT * FROM reservations WHERE line_uid = $1 ORDER BY scheduledate ASC;',
       values: [`${id}`]
     };
     connection.query(selectQuery)
       .then(res => {
-        console.log("select成功"&nowTime)
+        console.log("select成功")
         const nextRearvation = res.rows.filter(object => {
           console.log(object.scheduledate)
-          return parseInt(object.scheduledate) >= nowTime;
+          return object.scheduledate >= nowTime;
         });
         console.log(nextRearvation);
         resolve(nextRearvation);
