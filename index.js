@@ -322,7 +322,7 @@ const handlePostbackEvent = async (ev) => {
   } else if (splitData[0] === 'richconfirm') {
     console.log("予約確認")
     const nextResrvation = await checkPersonalReservation(ev);
-    console.log(ev)
+    console.log(nextResrvation)
     return client.replyMessage(ev.replyToken, {
       "type": "text",
       "text": nextResrvation
