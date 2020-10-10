@@ -322,7 +322,7 @@ const handlePostbackEvent = async (ev) => {
   } else if (splitData[0] === 'richconfirm') {
     console.log("予約確認")
     const nextResrvation = await checkPersonalReservation(ev);
-    console.log(ev)
+    console.log(nextResrvation)
     return client.replyMessage(ev.replyToken, {
       "type": "text",
       "text": nextResrvation
@@ -513,7 +513,7 @@ const confirmation = (ev, orderedPlace, selectedDate, selectedTime) => {
 const checkPersonalReservation = (ev) => {
   return new Promise((resolve, rejext) => {
     const id = ev.source.userId;
-    const nowTime = new Date().getTime();
+    const nowTime = new Date();
     const selectQuery = {
       text: 'SELECT * FROM reservations WHERE line_uid = $1 ORDER BY scheduledate ASC;',
       values: [`${id}`]
@@ -531,3 +531,5 @@ const checkPersonalReservation = (ev) => {
       .catch(e => console.log(e))
   });
 }
+
+
