@@ -527,6 +527,6 @@ const checkPersonalReservation = (ev) => {
         });
         resolve(nextRearvation);
       })
-      .catch(e => console.log(エラー))
+      .catch(e => console.log("エラー"))
   });
 }
