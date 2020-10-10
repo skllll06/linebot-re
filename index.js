@@ -329,8 +329,8 @@ const handlePostbackEvent = async (ev) => {
     console.log("予約確認")
     const nextResrvation = await checkPersonalReservation(ev);
     const splitDate = nextResrvation[0].scheduledate.toISOString().split('-');
-    const orderedPlace = nextResrvation[0].placwe
-    const strTime = timeDir[nextResrvation[0].scheduledtme]
+    const orderedPlace = nextResrvation[0].place;
+    const strTime = timeDir[nextResrvation[0].scheduletime];
     return client.replyMessage(ev.replyToken, {
       "type": "text",
       "text": `次回予約は${placeDic[orderedPlace]}の${splitDate[1]}月${splitDate[2]}日 ${strTime}です`
