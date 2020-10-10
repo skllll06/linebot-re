@@ -511,7 +511,6 @@ const confirmation = (ev, orderedPlace, selectedDate, selectedTime) => {
 
 const checkPersonalReservation = (ev) => {
   return new Promise((resolve, rejext) => {
-    console.log("ここにいる")
     const id = ev.source.userId;
     const nowTime = new Date().getTime();
     const selectQuery = {
@@ -522,7 +521,7 @@ const checkPersonalReservation = (ev) => {
       .then(res => {
         console.log("select成功")
         const nextRearvation = res.rows.filter(object => {
-          console.log("ここまできたよ")
+          console.log(object.scheduledate)
           return parseInt(object.scheduledate) >= nowTime;
         });
         resolve(nextRearvation);
