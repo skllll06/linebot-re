@@ -514,6 +514,7 @@ const checkPersonalReservation = (ev) => {
   return new Promise((resolve, rejext) => {
     const id = ev.source.userId;
     const nowTime = new Date();
+    console.log(nowTime)
     const selectQuery = {
       text: 'SELECT * FROM reservations WHERE line_uid = $1 ORDER BY scheduledate ASC;',
       values: [`${id}`]
