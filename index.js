@@ -322,10 +322,10 @@ const handlePostbackEvent = async (ev) => {
   } else if (splitData[0] === 'richconfirm') {
     console.log("予約確認")
     const nextResrvation = await checkPersonalReservation(ev);
-    console.log(nextResrvation)
+    const menu = MENU[parseInt(nextReservation[0].menu)];
     return client.replyMessage(ev.replyToken, {
       "type": "text",
-      "text": nextResrvation
+      "text": menu
     });
   };
 }
