@@ -520,13 +520,14 @@ const checkPersonalReservation = (ev) => {
     };
     connection.query(selectQuery)
       .then(res => {
-        console.log("select成功")
+        console.log("select成功"&nowTime)
         const nextRearvation = res.rows.filter(object => {
           console.log(object.scheduledate)
           return parseInt(object.scheduledate) >= nowTime;
         });
+        console.log(nextRearvation);
         resolve(nextRearvation);
       })
-      .catch(e => console.log("エラー"))
+      .catch(e => console.log(e))
   });
 }
