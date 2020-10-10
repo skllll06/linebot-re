@@ -24,6 +24,12 @@ const placeDic = {
   1: 'BETA-広島'
 };
 
+const timeDir = {
+  0: "8:00~12:00",
+  1: "13:00~17:00",
+  2: "8:00~17:00"
+}
+
 //LINE API設定
 const config = {
   channelAccessToken: process.env.ACCESS_TOKEN,
@@ -322,10 +328,12 @@ const handlePostbackEvent = async (ev) => {
   } else if (splitData[0] === 'richconfirm') {
     console.log("予約確認")
     const nextResrvation = await checkPersonalReservation(ev);
-    const menu = MENU[parseInt(nextReservation[0].menu)];
+    const splitDate = nextReservation[0].scheduledate.split('-');
+    const orderedPlace = nextReservation[0].placwe
+    const strTime = timeDir[nextReservation[0].scheduledtme]
     return client.replyMessage(ev.replyToken, {
       "type": "text",
-      "text": menu
+      "text": `次回予約は${placeDic[orderedPlace]}の${splitDate[1]}月${splitDate[2]}日 ${strTime}です`
     });
   };
 }
