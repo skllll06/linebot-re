@@ -14,7 +14,8 @@ const connection = new Client({
   host: process.env.PG_HOST,
   database: process.env.PG_DATABASE,
   password: process.env.PG_PASSWORD,
-  port: 5432
+  port: 5432,
+  dateStrings: 'date'
 });
 connection.connect();
 
@@ -328,9 +329,11 @@ const handlePostbackEvent = async (ev) => {
   } else if (splitData[0] === 'richconfirm') {
     console.log("予約確認")
     const nextResrvation = await checkPersonalReservation(ev);
+    
     const splitDate = nextResrvation[0].scheduledate.toISOString().split('-');
     const orderedPlace = nextResrvation[0].place;
     const strTime = timeDir[nextResrvation[0].scheduletime];
+    
     return client.replyMessage(ev.replyToken, {
       "type": "text",
       "text": `次回予約は${placeDic[orderedPlace]}の${splitDate[1]}月${splitDate[2]}日 ${strTime}です`
