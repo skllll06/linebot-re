@@ -7,6 +7,7 @@ const line = require("@line/bot-sdk");
 var fs = require('fs');
 var ids = require('ids');
 const { resolve } = require("path");
+require('date-utils');
 
 //postgresql設定
 const connection = new Client({
@@ -329,7 +330,7 @@ const handlePostbackEvent = async (ev) => {
     console.log("予約確認")
     const nextResrvation = await checkPersonalReservation(ev);
 
-    const splitDate = nextResrvation[0].scheduledate.format(YYYY - MM - DD).toISOString().split('-');
+    const splitDate = nextResrvation[0].scheduledate.toFormat('YYYY-MM-DD').toISOString().split('-');
     const orderedPlace = nextResrvation[0].place;
     const strTime = timeDir[nextResrvation[0].scheduletime];
 
