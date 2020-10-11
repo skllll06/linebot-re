@@ -329,7 +329,7 @@ const handlePostbackEvent = async (ev) => {
     console.log("予約確認")
     const nextResrvation = await checkPersonalReservation(ev);
 
-    const splitDate = nextResrvation[0].scheduledate.toISOString(YYYY-MM-DD).split('-');
+    const splitDate = nextResrvation[0].scheduledate.format(YYYY - MM - DD).toISOString().split('-');
     const orderedPlace = nextResrvation[0].place;
     const strTime = timeDir[nextResrvation[0].scheduletime];
 
