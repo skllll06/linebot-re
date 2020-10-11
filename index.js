@@ -329,8 +329,8 @@ const handlePostbackEvent = async (ev) => {
   } else if (splitData[0] === 'richconfirm') {
     console.log("予約確認")
     const nextResrvation = await checkPersonalReservation(ev);
-
-    const splitDate = nextResrvation[0].scheduledate.toFormat('YYYY-MM-DD').toISOString().split('-');
+    const formatDate = nextResrvation[0].scheduledate.toFormat('YYYY-MM-DD')
+    const splitDate = formatDate.toISOString().split('-');
     const orderedPlace = nextResrvation[0].place;
     const strTime = timeDir[nextResrvation[0].scheduletime];
 
